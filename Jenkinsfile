@@ -14,7 +14,9 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker Image..."
-                    sh "docker build -t ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER} ."
+                    timeout(time: 60, unit: 'MINUTES') {
+                        sh "docker build -t ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER} ."
+                    }
                 }
             }
         }
