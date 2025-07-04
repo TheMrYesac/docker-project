@@ -14,22 +14,18 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker Image..."
-                    timeout(time: 60, unit: 'MINUTES') {
-                        sh "docker build -t ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER} ."
-                    }
+                        sh "docker build -t ${ImageRegistry}/${JOB_NAME}:latest ."
                 }
             }
         }
 
         stage("pushImage") {
             steps {
-                timeout(time: 30, unit: 'MINUTES') {
-                    script {
+                script {
                         echo "Pushing Image to DockerHub..."
                         withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                             sh "echo $PASS | docker login -u $USER --password-stdin"
-                            sh "docker push ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER}"
-                        }
+                            sh "docker push ${ImageRegistry}/${JOB_NAME}:latest"
                     }
                 }
             }
