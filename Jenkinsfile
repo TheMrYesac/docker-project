@@ -21,11 +21,13 @@ pipeline {
 
         stage("pushImage") {
             steps {
-                script {
-                    echo "Pushing Image to DockerHub..."
-                    withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                        sh "echo $PASS | docker login -u $USER --password-stdin"
-                        sh "docker push ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER}"
+                timeout(time: 30, unit: 'MINUTES') {
+                    script {
+                        echo "Pushing Image to DockerHub..."
+                        withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                            sh "echo $PASS | docker login -u $USER --password-stdin"
+                            sh "docker push ${ImageRegistry}/${JOB_NAME}:${BUILD_NUMBER}"
+                        }
                     }
                 }
             }
